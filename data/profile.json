@@ -17,7 +17,7 @@
   },
   "today": {
     "date": "2026-11-17",
-    "contributions": 6,
+    "contributions": 7,
     "earned_xp": 8
   },
   "week": [
@@ -47,7 +47,7 @@
     },
     {
       "date": "2026-11-17",
-      "count": 6
+      "count": 7
     }
   ],
   "projects": [
@@ -80,7 +80,7 @@
   "updated_on": "2026-11-17",
   "calendar_basis": "GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。",
   "calendar": {
-    "total": 55,
+    "total": 56,
     "active_days": 12,
     "start": "2025-11-16",
     "end": "2026-11-17",
@@ -1551,7 +1551,7 @@
       },
       {
         "date": "2026-11-17",
-        "count": 6
+        "count": 7
       }
     ]
   },
@@ -1560,8 +1560,8 @@
       "date": "2026-11-17",
       "kind": "commit",
       "repo": "William-331/William-331",
-      "count": 5,
-      "title": "完成了 5 次提交"
+      "count": 6,
+      "title": "完成了 6 次提交"
     },
     {
       "date": "2026-11-17",
