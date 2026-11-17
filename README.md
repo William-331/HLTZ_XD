@@ -3,13 +3,13 @@
 写点代码，也养一只叫 **扣子** 的小猫。
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-room-dark.svg">
-  <img src="./assets/kouzi-room-light.svg" alt="精神很好，和毛线球搏斗中" width="900">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-room-dark.svg?v=5be19428038c">
+  <img src="./assets/kouzi-room-light.svg?v=5be19428038c" alt="精神很好，和毛线球搏斗中" width="900">
 </picture>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-passport-dark.svg">
-  <img src="./assets/kouzi-passport-light.svg" alt="扣子的成长手账" width="900">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-passport-dark.svg?v=5be19428038c">
+  <img src="./assets/kouzi-passport-light.svg?v=5be19428038c" alt="扣子的成长手账" width="900">
 </picture>
 
 > 🐾 扣子的今日便签：键盘可以让一点位置给猫吗？
@@ -17,8 +17,8 @@
 ## 最近的猫爪印
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-footprints-dark.svg">
-  <img src="./assets/kouzi-footprints-light.svg" alt="最近七天的贡献足迹" width="630">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-footprints-dark.svg?v=5be19428038c">
+  <img src="./assets/kouzi-footprints-light.svg?v=5be19428038c" alt="最近七天的贡献足迹" width="630">
 </picture>
 
 今天 **5** 次贡献 · 今日已记 **8 XP** · 精神很好，和毛线球搏斗中
@@ -27,8 +27,8 @@
 <summary>🌱 翻开全年猫爪花园</summary>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-garden-dark.svg">
-  <img src="./assets/kouzi-garden-light.svg" alt="全年贡献花园：每一格是一日，颜色越深贡献越多" width="900">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-garden-dark.svg?v=5be19428038c">
+  <img src="./assets/kouzi-garden-light.svg?v=5be19428038c" alt="全年贡献花园：每一格是一日，颜色越深贡献越多" width="900">
 </picture>
 
 每一格是一天，颜色越深，留下的贡献越多。完整日期与活动也能在主页下方的 GitHub 原生贡献区查看。
@@ -78,36 +78,25 @@
 
 新项目会自动入架；简介优先取自仓库说明，再从 README 提取摘要，最后按语言生成通用介绍。
 
-<table>
-<tr>
-<td>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-1-dark.svg">
-  <img src="./assets/project-1-light.svg" alt="William-331.github.io：Aurora 3D Christmas Tree · 一个基于 Three.js 的单页 3D 圣诞树互动网站。页面展示可在圣诞树与星云形态之间切换的粒子场景，并将图片与音乐组合成可浏览的节日相册。" width="420">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-1-dark.svg?v=5be19428038c">
+  <img src="./assets/project-1-light.svg?v=5be19428038c" alt="William-331.github.io：Aurora 3D Christmas Tree · 一个基于 Three.js 的单页 3D 圣诞树互动网站。页面展示可在圣诞树与星云形态之间切换的粒子场景，并将图片与音乐组合成可浏览的节日相册。" width="450">
 </picture>
-</td>
-<td>
+
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-2-dark.svg">
-  <img src="./assets/project-2-light.svg" alt="hk-stock-trading：天成控股 02110.HK 权证信息查阅与意向管理平台 · 面向内部使用的权证信息查阅与意向管理平台，支持参考估值信息查阅、意向提交、审核流程、每日估值区间图和记录备份。" width="420">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-2-dark.svg?v=5be19428038c">
+  <img src="./assets/project-2-light.svg?v=5be19428038c" alt="hk-stock-trading：天成控股 02110.HK 权证信息查阅与意向管理平台 · 面向内部使用的权证信息查阅与意向管理平台，支持参考估值信息查阅、意向提交、审核流程、每日估值区间图和记录备份。" width="450">
 </picture>
-</td>
-</tr>
-<tr>
-<td>
+
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-3-dark.svg">
-  <img src="./assets/project-3-light.svg" alt="kaggle-spaceship-titanic：MLWcode - Spaceship Titanic Ensemble Pipeline · AI3023 Machine Learning Workshop course project. Team closeclaw@MLW." width="420">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-3-dark.svg?v=5be19428038c">
+  <img src="./assets/project-3-light.svg?v=5be19428038c" alt="kaggle-spaceship-titanic：MLWcode - Spaceship Titanic Ensemble Pipeline · AI3023 Machine Learning Workshop course project. Team closeclaw@MLW." width="450">
 </picture>
-</td>
-<td>
+
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-4-dark.svg">
-  <img src="./assets/project-4-light.svg" alt="ML_PROJECT：TP53 基因突变预测 — 基于 METABRIC 乳腺癌 RNA 表达数据 · 本项目从零实现机器学习算法（不调用 scikit-learn 等 ML 库），利用 METABRIC 数据库中 489 个 RNA 基因表达特征 来预测乳腺癌样本的 TP53 抑癌基因突变状态（突变型 / 野生型）。" width="420">
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/project-4-dark.svg?v=5be19428038c">
+  <img src="./assets/project-4-light.svg?v=5be19428038c" alt="ML_PROJECT：TP53 基因突变预测 — 基于 METABRIC 乳腺癌 RNA 表达数据 · 本项目从零实现机器学习算法（不调用 scikit-learn 等 ML 库），利用 METABRIC 数据库中 489 个 RNA 基因表达特征 来预测乳腺癌样本的 TP53 抑癌基因突变状态（突变型 / 野生型）。" width="450">
 </picture>
-</td>
-</tr>
-</table>
 
 <details>
 <summary>📚 展开全部公开仓库与技术零食柜</summary>

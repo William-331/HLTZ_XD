@@ -9,6 +9,7 @@ import argparse
 import base64
 from datetime import date, datetime, timedelta, timezone
 from html import escape
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -354,19 +355,22 @@ def enrich_playfulness(model, ledger):
     return model
 
 
-def picture(base, alt, width=900):
-    return f'<picture>\n  <source media="(prefers-color-scheme: dark)" srcset="./assets/{base}-dark.svg">\n  <img src="./assets/{base}-light.svg" alt="{escape(alt,quote=True)}" width="{width}">\n</picture>'
+def picture(base, alt, width=900, revision=''):
+    suffix='?v='+revision if revision else ''
+    return f'<picture>\n  <source media="(prefers-color-scheme: dark)" srcset="./assets/{base}-dark.svg{suffix}">\n  <img src="./assets/{base}-light.svg{suffix}" alt="{escape(alt,quote=True)}" width="{width}">\n</picture>'
 
 
 def render_readme(model):
     pet=model['pet'];name=md_text(pet['name']);book=model.get('scrapbook',{})
+    revision=hashlib.sha256(dump(model).encode()).hexdigest()[:12]
+    def image(base,alt,width=900):return picture(base,alt,width,revision)
     lines=[f'# William & {name}', '', '写点代码，也养一只叫 **'+name+'** 的小猫。', '',
-           picture('kouzi-room',pet['status'],900), '', picture('kouzi-passport','扣子的成长手账',900), '',
+           image('kouzi-room',pet['status'],900), '', image('kouzi-passport','扣子的成长手账',900), '',
            f'> 🐾 {name}的今日便签：{md_text(book.get("daily_note","写累了就伸个懒腰。"))}', '',
-           '## 最近的猫爪印', '', picture('kouzi-footprints','最近七天的贡献足迹',630), '',
+           '## 最近的猫爪印', '', image('kouzi-footprints','最近七天的贡献足迹',630), '',
            f'今天 **{model["today"]["contributions"]}** 次贡献 · 今日已记 **{model["today"]["earned_xp"]} XP** · '+md_text(pet['status']), '',
            '<details>', '<summary>🌱 翻开全年猫爪花园</summary>', '',
-           picture('kouzi-garden','全年贡献花园：每一格是一日，颜色越深贡献越多',900), '',
+           image('kouzi-garden','全年贡献花园：每一格是一日，颜色越深贡献越多',900), '',
            '每一格是一天，颜色越深，留下的贡献越多。完整日期与活动也能在主页下方的 GitHub 原生贡献区查看。', '', '</details>', '',
            '## 扣子的收藏册', '', '| 收藏章 | 解锁条件 | 状态 |', '| :--- | :--- | :--- |']
     for stamp in book.get('stamps',[]):
@@ -375,13 +379,8 @@ def render_readme(model):
     for i,text in enumerate(book.get('boxes',[]),1):
         lines.extend(['<details>', f'<summary>📦 第 {i} 个纸箱</summary>', '', md_text(text), '', '</details>', ''])
     lines.extend(['</details>', '', '## 扣子正在研究的项目', '', '新项目会自动入架；简介优先取自仓库说明，再从 README 提取摘要，最后按语言生成通用介绍。', ''])
-    lines.append('<table>')
-    for i in range(0,len(model['projects']),2):
-        lines.append('<tr>')
-        for j,repo in enumerate(model['projects'][i:i+2],i):
-            lines.extend(['<td>',picture(f'project-{j+1}',repo['name']+'：'+repo['description'],420),'</td>'])
-        lines.append('</tr>')
-    lines.extend(['</table>', ''])
+    for i,repo in enumerate(model['projects']):
+        lines.extend([image(f'project-{i+1}',repo['name']+'：'+repo['description'],450),''])
     lines.extend(['<details>', '<summary>📚 展开全部公开仓库与技术零食柜</summary>', '', '| 项目 | 技术 | 最近推送 | 简介 |', '| :--- | :--- | :--- | :--- |'])
     for repo in model.get('repositories',[]):
         lines.append(f'| {md_text(repo["name"])} | {md_text(repo["language"])} | {repo["updated_on"]} | {md_text(repo["description"])} |')

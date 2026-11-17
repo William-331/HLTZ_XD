@@ -186,7 +186,7 @@ class ReadmeHomeTests(unittest.TestCase):
         self.assertNotIn('进入',readme)
         self.assertNotIn('site/', '\n'.join(files))
         import re
-        for asset in re.findall(r'(?:src|srcset)="\./([^\"]+)"',readme):self.assertIn(asset,files)
+        for asset in re.findall(r'(?:src|srcset)="\./([^\"]+)"',readme):self.assertIn(asset.split('?')[0],files)
         self.assertEqual(readme.count('<details>'),readme.count('</details>'))
         for path,content in files.items():
             if path.endswith('.svg'):ET.fromstring(content)
