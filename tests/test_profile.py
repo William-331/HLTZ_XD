@@ -105,7 +105,7 @@ class ReliabilityTests(unittest.TestCase):
             if path.endswith('.svg'):
                 node=ET.fromstring(content)
                 self.assertFalse(any(e.tag.endswith('script') or e.tag.endswith('foreignObject') for e in node.iter()))
-        self.assertNotIn('<script>',files['site/data.js'])
+        self.assertNotIn('<script>',files['README.md'])
 
 
 class IntegratedHomeTests(unittest.TestCase):
@@ -139,16 +139,12 @@ class IntegratedHomeTests(unittest.TestCase):
         self.assertEqual([r['repo'] for r in result],['William-331/new','William-331/old'])
         self.assertNotIn('private',json.dumps(result))
 
-    def test_repository_notes_stay_public_and_are_size_limited(self):
-        import base64
-        content='<script>untrusted()</script>\n'+'x'*25000
-        response={'encoding':'base64','content':base64.b64encode(content.encode()).decode()}
-        with patch.object(p,'api_json',return_value=response) as mocked:
+    def test_repository_library_stays_public_without_fetching_unneeded_readmes(self):
+        with patch.object(p,'api_json',side_effect=AssertionError('Unexpected request')) as mocked:
             result=p.repository_library([repo('private',private=True),repo('public')],CONFIG,'test')
-        self.assertEqual(mocked.call_count,1)
+        self.assertEqual(mocked.call_count,0)
         self.assertEqual([r['name'] for r in result],['public'])
-        self.assertTrue(result[0]['readme_truncated'])
-        self.assertEqual(len(result[0]['readme']),24000)
+        self.assertNotIn('readme',result[0])
 
     def test_year_seed_avoids_redundant_calendar_requests(self):
         calendar=p.parse_year(self.year_collection(),TODAY)
@@ -156,6 +152,49 @@ class IntegratedHomeTests(unittest.TestCase):
             counts=p.fetch_days(CONFIG,{},'test',datetime(2026,11,17,12,tzinfo=timezone.utc),seed={d['date']:d['count'] for d in calendar['days']})
         self.assertEqual(len(counts),7)
         self.assertEqual(counts[TODAY.isoformat()],1)
+
+
+class ReadmeHomeTests(unittest.TestCase):
+    def model(self):
+        counts={(TODAY-timedelta(days=i)).isoformat():1 for i in range(7)}
+        ledger=p.advance_growth({},counts,CONFIG,TODAY)
+        model=p.model_from(CONFIG,ledger,counts,p.select_projects([repo('example')],CONFIG),TODAY)
+        model['repositories']=[{'name':n,'fork':False,'archived':False,'language':'Python','updated_on':'2026-11-17','description':'A project'} for n in ('one','two','three')]
+        return p.enrich_playfulness(model,ledger),ledger
+
+    def test_collectibles_use_post_adoption_growth_and_real_project_counts(self):
+        model,ledger=self.model()
+        book=model['scrapbook']
+        self.assertEqual(book['days_together'],1)
+        self.assertEqual(book['active_days'],1)
+        self.assertEqual([s['unlocked'] for s in book['stamps']],[True,True,False,False,True,False])
+        original=deepcopy(ledger)
+        self.assertEqual(model,p.enrich_playfulness(deepcopy(model),ledger))
+        self.assertEqual(ledger,original)
+        self.assertEqual(sum('宝藏' in box for box in book['boxes']),1)
+
+    def test_readme_has_no_website_redirect_or_fake_controls_and_is_self_contained(self):
+        model,ledger=self.model()
+        files=p.build_files(model,ledger)
+        readme=files['README.md']
+        self.assertNotIn('https://',readme)
+        self.assertNotIn('<a ',readme)
+        self.assertNotIn('进入',readme)
+        self.assertNotIn('site/', '\n'.join(files))
+        import re
+        for asset in re.findall(r'(?:src|srcset)="\./([^\"]+)"',readme):self.assertIn(asset,files)
+        self.assertEqual(readme.count('<details>'),readme.count('</details>'))
+        for path,content in files.items():
+            if path.endswith('.svg'):ET.fromstring(content)
+
+    def test_repository_metadata_cannot_create_links_html_or_table_cells(self):
+        model,ledger=self.model()
+        model['repositories'][0]['description']='[click](https://example.com) | <script>x</script> @someone'
+        readme=p.render_readme(model)
+        self.assertNotIn('[click]',readme)
+        self.assertNotIn('<script>',readme)
+        self.assertNotIn('@someone',readme)
+        self.assertIn('&#124;',readme)
 
 
 if __name__=='__main__':unittest.main()

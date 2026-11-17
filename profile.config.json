@@ -5,7 +5,5 @@
   "xp_per_level": 60,
   "project_limit": 4,
   "featured_topic": "kouzi-featured",
-  "excluded_repos": ["William-331"],
-  "pages_url": "https://william-331.github.io/William-331/",
-  "experience_url": "https://william-331.github.io/"
+  "excluded_repos": ["William-331"]
 }

@@ -1,4 +1,5 @@
-"""Original pixel room shared by the README and the interactive home. No dependencies."""
+"""Original pixel room and self-contained README artwork. No remote resources."""
+from datetime import date
 from html import escape
 
 CAT = (
@@ -129,5 +130,50 @@ def project_svg(repo, theme='light'):
     title=wrap_text(repo['name'],30,1)[0]
     text(20,30,'KOUZI IS EXPLORING',10,'accent');text(20,57,title,20)
     for i,line in enumerate(wrap_text(repo['description'])): text(20,82+i*19,line,14,'muted')
-    text(20,135,repo['language']+' · '+repo['updated_on']+' 更新',12,'accent');text(387,32,'↗',19,'accent')
+    text(20,135,repo['language']+' · '+repo['updated_on']+' 更新',12,'accent')
+    out.append('</svg>');return ''.join(out)
+
+
+def passport_svg(model, theme='light'):
+    p=PALETTES[theme];pet=model['pet'];book=model.get('scrapbook',{})
+    out=[svg_open(720,148,'扣子的成长手账'),f'<rect x="1" y="1" width="718" height="146" rx="12" fill="{p["paper"]}" stroke="{p["edge"]}"/>']
+    def text(x,y,value,size=16,color='ink'):
+        out.append(f'<text x="{x}" y="{y}" fill="{p[color]}" font-size="{size}" font-family="Segoe UI,Microsoft YaHei,sans-serif">{escape(str(value))}</text>')
+    text(24,29,'KOUZI / GROWING TOGETHER',11,'accent')
+    text(24,61,f'{pet["name"]} · Lv. {pet["level"]} {pet["title"]}',24)
+    text(24,88,f'{pet["xp_in_level"]} / 60 XP · 距下一级 {pet["xp_to_next"]} XP',15,'muted')
+    out.append(f'<rect x="24" y="103" width="390" height="10" rx="5" fill="{p["edge"]}"/>')
+    progress=390*pet['xp_in_level']/60
+    if progress:out.append(f'<rect x="24" y="103" width="{progress:.1f}" height="10" rx="5" fill="{p["accent"]}"/>')
+    text(24,134,f'累计 {pet["total_xp"]} XP · 慢慢长大也很好',13,'muted')
+    out.append(f'<path d="M450 25 V123" stroke="{p["edge"]}"/>')
+    text(478,46,f'一起生活第 {book.get("days_together",(date.fromisoformat(model["updated_on"])-date.fromisoformat(pet["adopted_on"])).days+1)} 天',20)
+    collected=sum(s['unlocked'] for s in book.get('stamps',[]))
+    text(478,77,f'已收藏 {collected} / {len(book.get("stamps",[]))} 枚印章',17,'accent')
+    text(478,107,'今天有代码，也有猫。',16,'muted')
+    out.append('</svg>');return ''.join(out)
+
+
+def garden_svg(calendar, theme='light'):
+    p=PALETTES[theme];days=calendar.get('days',[])
+    out=[svg_open(780,205,'全年猫爪花园'),f'<rect width="780" height="205" rx="12" fill="{p["paper"]}"/>']
+    def text(x,y,value,size=13,color='muted'):
+        out.append(f'<text x="{x}" y="{y}" font-family="Segoe UI,Microsoft YaHei,sans-serif" font-size="{size}" fill="{p[color]}">{escape(str(value))}</text>')
+    text(22,28,'KOUZI’S PAW GARDEN',12,'accent')
+    text(22,52,f'{calendar.get("total",0)} 次贡献 · {calendar.get("active_days",0)} 个活跃日',21,'ink')
+    if days:
+        text(480,50,f'{days[0]["date"]} — {days[-1]["date"]}',13)
+        offset=(date.fromisoformat(days[0]['date']).weekday()+1)%7
+        for i,day in enumerate(days):
+            value=day['count'];col,row=divmod(i+offset,7);x=47+col*13;y=81+row*13
+            fill=p['edge'] if not value else p['leaf'] if value<=3 else p['rug'] if value<=9 else p['accent']
+            out.append(f'<rect x="{x}" y="{y}" width="10" height="10" rx="2" fill="{fill}"><title>{escape(day["date"])}: {value}</title></rect>')
+            if value>=10:out.append(f'<circle cx="{x+5}" cy="{y+5}" r="1.4" fill="{p["paper"]}"/>')
+            if day['date'].endswith('-01') or i==0:text(x,73,day['date'][5:7]+'月',10)
+        for row,label in ((1,'一'),(3,'三'),(5,'五')):text(21,90+row*13,label,11)
+    text(22,189,'每一格都是一起走过的一天。',12)
+    text(590,189,'少',12)
+    for i,fill in enumerate((p['edge'],p['leaf'],p['rug'],p['accent'])):
+        out.append(f'<rect x="{613+i*17}" y="178" width="11" height="11" rx="2" fill="{fill}"/>')
+    text(689,189,'多',12)
     out.append('</svg>');return ''.join(out)

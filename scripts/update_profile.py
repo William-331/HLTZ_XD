@@ -6,7 +6,6 @@ Never pass a token as a command-line argument or store one in generated files.
 from __future__ import annotations
 
 import argparse
-import base64
 from datetime import date, datetime, timedelta, timezone
 from html import escape
 import json
@@ -21,7 +20,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from pet_art import footprint_svg, project_svg, room_svg
+from pet_art import footprint_svg, garden_svg, passport_svg, project_svg, room_svg
 
 ROOT = Path(__file__).resolve().parent.parent
 API = 'https://api.github.com'
@@ -83,9 +82,6 @@ def validate_config(config):
         raise ProfileError('project_limit must be 1–12.')
     if not clean(config.get('pet_name')):
         raise ProfileError('pet_name is required.')
-    for key in ('pages_url','experience_url'):
-        if not config.get(key,'').startswith('https://'):
-            raise ProfileError(f'{key} must use HTTPS.')
 
 
 def get_token(use_git_credential=False):
@@ -183,17 +179,6 @@ def repository_library(raw, config, token):
               'archived':bool(repo.get('archived')),'fork':bool(repo.get('fork')),
               'topics':[clean(t,50) for t in repo.get('topics',[])],
               'featured':config.get('featured_topic','kouzi-featured') in repo.get('topics',[])}
-        try:
-            readme=api_json(f'/repos/{config["username"]}/{urllib.parse.quote(name,safe="")}/readme',token)
-            if readme.get('encoding')=='base64':
-                content=base64.b64decode(readme.get('content',''),validate=False).decode('utf-8',errors='replace')
-                item['readme']=content[:24000]
-                item['readme_truncated']=len(content)>24000
-            else:
-                item['readme']='';item['readme_truncated']=False
-        except ProfileError as exc:
-            if 'HTTP 404' not in str(exc):raise
-            item['readme']='';item['readme_truncated']=False
         result.append(item)
     result.sort(key=lambda r:(r['featured'],r['updated_on'],r['name'].lower()),reverse=True)
     return result
@@ -309,7 +294,28 @@ def model_from(config, ledger, counts, projects, today, source='github'):
     unlocks=['纸箱与小碗']
     for threshold,label in ((2,'猫窝、毛线球与绿植'),(4,'窗边坐垫'),(6,'仓库守护猫纪念画')):
         if level>=threshold:unlocks.append(label)
-    return {'schema_version':1,'username':config['username'],'pet':{'name':config['pet_name'],'adopted_on':config['adopted_on'],'level':level,'title':level_title(level),'total_xp':total,'xp_in_level':total%60,'xp_to_next':60-total%60,'action':action,'status':status,'unlocks':unlocks},'today':{'date':today.isoformat(),'contributions':count,'earned_xp':ledger['days'].get(today.isoformat(),{}).get('xp',0)},'week':week,'projects':projects,'pages_url':config['pages_url'],'experience_url':config['experience_url'],'source':source,'updated_on':today.isoformat(),'calendar_basis':'GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。'}
+    return {'schema_version':3,'username':config['username'],'pet':{'name':config['pet_name'],'adopted_on':config['adopted_on'],'level':level,'title':level_title(level),'total_xp':total,'xp_in_level':total%60,'xp_to_next':60-total%60,'action':action,'status':status,'unlocks':unlocks},'today':{'date':today.isoformat(),'contributions':count,'earned_xp':ledger['days'].get(today.isoformat(),{}).get('xp',0)},'week':week,'projects':projects,'source':source,'updated_on':today.isoformat(),'calendar_basis':'GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。'}
+
+
+def enrich_playfulness(model, ledger):
+    """Daily flavor is deterministic; collectible milestones use real saved progress."""
+    today=date.fromisoformat(model['updated_on'])
+    adopted=date.fromisoformat(model['pet']['adopted_on'])
+    days_together=(today-adopted).days+1
+    active_days=sum(item['xp']>0 for item in ledger['days'].values())
+    library=[r for r in model.get('repositories',[]) if r['name'].lower()!=model['username'].lower() and not r.get('fork') and not r.get('archived')]
+    languages=sorted({r['language'] for r in library if r['language']!='尚未标注'})
+    notes=('先伸个懒腰，再写下一行。','今天的 bug，有我陪你一起蹲。','键盘可以让一点位置给猫吗？','小步前进，也能留下漂亮的爪印。','写累了就看看窗外，猫也是。','代码慢慢写，小鱼慢慢吃。','你负责探索，我负责把纸箱看好。')
+    objects=('一团会滚走的毛线','一枚鱼骨书签','一张猫爪贴纸','一片窗边的小叶子','一顶迷你纸帽','一颗玻璃弹珠','一封写着「喵」的信')
+    day_index=today.toordinal()
+    surprise=day_index%3
+    boxes=['纸箱里只有一张纸条：「扣子刚从这里路过。」','扣子在这里睡着了。轻一点，别吵醒它。','里面传来窸窸窣窣的声音……原来是风。']
+    boxes[surprise]='你翻到'+objects[(day_index//3)%len(objects)]+'。扣子宣布：今天的宝藏就是它了！'
+    milestones=(('入住纪念','扣子住进主页',True),('第一口小鱼','累计获得 5 XP',model['pet']['total_xp']>=5),('三日搭子','领养后有 3 个活跃日',active_days>=3),('一周脚印','领养后有 7 个活跃日',active_days>=7),('书架管理员','拥有 3 个公开原创项目',len(library)>=3),('键盘学徒','成长到 Lv.2',model['pet']['level']>=2))
+    model['scrapbook']={'days_together':days_together,'active_days':active_days,'languages':languages,
+                        'daily_note':notes[day_index%len(notes)],'boxes':boxes,
+                        'stamps':[{'name':name,'requirement':rule,'unlocked':unlocked} for name,rule,unlocked in milestones]}
+    return model
 
 
 def picture(base, alt, width=900):
@@ -317,28 +323,65 @@ def picture(base, alt, width=900):
 
 
 def render_readme(model):
-    pet=model['pet'];name=pet['name']
-    # GitHub is a clearly labelled gateway; the complete experience lives on Pages.
-    return '\n'.join([
-        f'# William & {name}', '',
-        f'写点代码，也养一只叫 **{name}** 的小猫。', '',
-        f'## [进入扣子的完整主页 →]({model["pages_url"]})', '',
-        '养猫互动、仓库书架、全年猫爪日历和近期活动，都在同一个主页里。', '',
-        f'<a href="{escape(model["pages_url"],quote=True)}">{picture("kouzi-room",name+"的猫窝",900)}</a>', '',
-        f'**{name} · Lv. {pet["level"]} {pet["title"]}** · {pet["xp_in_level"]}/60 XP',
-        '跟着 GitHub 的每日贡献慢慢长大，休息不掉级。', '',
-        f'<sub>最后同步：{model["updated_on"]} · 这里是主页入口，完整互动在上方链接中。</sub>', ''
-    ])
+    pet=model['pet'];name=md_text(pet['name']);book=model.get('scrapbook',{})
+    lines=[f'# William & {name}', '', '写点代码，也养一只叫 **'+name+'** 的小猫。', '',
+           picture('kouzi-room',pet['status'],900), '', picture('kouzi-passport','扣子的成长手账',900), '',
+           f'> 🐾 {name}的今日便签：{md_text(book.get("daily_note","写累了就伸个懒腰。"))}', '',
+           '## 最近的猫爪印', '', picture('kouzi-footprints','最近七天的贡献足迹',630), '',
+           f'今天 **{model["today"]["contributions"]}** 次贡献 · 今日已记 **{model["today"]["earned_xp"]} XP** · '+md_text(pet['status']), '',
+           '<details>', '<summary>🌱 翻开全年猫爪花园</summary>', '',
+           picture('kouzi-garden','全年贡献花园：每一格是一日，颜色越深贡献越多',900), '',
+           '每一格是一天，颜色越深，留下的贡献越多。完整日期与活动也能在主页下方的 GitHub 原生贡献区查看。', '', '</details>', '',
+           '## 扣子的收藏册', '', '| 收藏章 | 解锁条件 | 状态 |', '| :--- | :--- | :--- |']
+    for stamp in book.get('stamps',[]):
+        lines.append(f'| {md_text(stamp["name"])} | {md_text(stamp["requirement"])} | {"🐾 已收藏" if stamp["unlocked"] else "○ 等待点亮"} |')
+    lines.extend(['', '<details>', '<summary>🎁 翻一翻今天的纸箱</summary>', '', '选一个纸箱打开看看；每天换一组小故事。', ''])
+    for i,text in enumerate(book.get('boxes',[]),1):
+        lines.extend(['<details>', f'<summary>📦 第 {i} 个纸箱</summary>', '', md_text(text), '', '</details>', ''])
+    lines.extend(['</details>', '', '## 扣子正在研究的项目', '', '新项目会自动入架；没有简介时，扣子会根据主要语言写一句通用介绍。', ''])
+    lines.append('<table>')
+    for i in range(0,len(model['projects']),2):
+        lines.append('<tr>')
+        for j,repo in enumerate(model['projects'][i:i+2],i):
+            lines.extend(['<td>',picture(f'project-{j+1}',repo['name']+'：'+repo['description'],420),'</td>'])
+        lines.append('</tr>')
+    lines.extend(['</table>', ''])
+    lines.extend(['<details>', '<summary>📚 展开全部公开仓库与技术零食柜</summary>', '', '| 项目 | 技术 | 最近推送 | 简介 |', '| :--- | :--- | :--- | :--- |'])
+    for repo in model.get('repositories',[]):
+        lines.append(f'| {md_text(repo["name"])} | {md_text(repo["language"])} | {repo["updated_on"]} | {md_text(repo["description"])} |')
+    lines.extend(['', '**技术零食柜**：'+(' · '.join(md_text(s) for s in book.get('languages',[])) or '新口味正在准备中'), '', '</details>', '',
+                  '## 猫咪巡逻日志', '', '| 日期 | 扣子记下的事情 |', '| :--- | :--- |'])
+    entries=model.get('activity',[])
+    for entry in entries[:5]:
+        lines.append(f'| {entry["date"]} | {md_text(entry["repo"])} · {md_text(entry["title"])} |')
+    if not entries:lines.append('| — | 还没有公开的活动，先陪扣子晒一会儿太阳。 |')
+    if len(entries)>5:
+        lines.extend(['', '<details>', '<summary>📖 翻看更早的巡逻记录</summary>', '', '| 日期 | 记录 |', '| :--- | :--- |'])
+        for entry in entries[5:20]:lines.append(f'| {entry["date"]} | {md_text(entry["repo"])} · {md_text(entry["title"])} |')
+        lines.extend(['', '</details>'])
+    lines.extend(['', '<details>', '<summary>🧶 成长与猫窝装饰怎么解锁？</summary>', '',
+                  'GitHub 每日贡献会自动结算：0 次 → 0 XP，1–3 次 → 5 XP，4–9 次 → 8 XP，10 次以上 → 10 XP。每 60 XP 升一级，领养前的历史不补发经验；休息不扣分。', '',
+                  '| 等级 | 猫窝的新变化 |', '| :--- | :--- |', '| Lv.1 | 纸箱与小碗 |', '| Lv.2 | 地毯、毛线球与绿植 |', '| Lv.4 | 窗边坐垫 |', '| Lv.6 | 仓库守护猫纪念画 |', '',
+                  '当前已解锁：'+md_text('；'.join(pet['unlocks']))+'。', '', '</details>', '',
+                  f'<sub>领养于 {pet["adopted_on"]} · 最后同步 {model["updated_on"]} · 每天自动更新，GitHub 数据可能延迟。公开数据视角，与登录后看到的贡献数可能不同。</sub>', ''])
+    return '\n'.join(lines)
+
+
+def md_text(value):
+    """Treat repository metadata as text, including inside GFM table cells."""
+    value=clean(value,500)
+    # Encode punctuation that could create Markdown links, tags, tables or mentions.
+    return ''.join(f'&#{ord(c)};' if c in '&<>|`*_[]!\\@' else c for c in value)
 
 
 def build_files(model, ledger):
-    files={'README.md':render_readme(model),'data/growth.json':dump(ledger),'data/profile.json':dump(model),'site/data.json':dump(model),'site/data.js':'window.KOUZI_PROFILE = '+json.dumps(model,ensure_ascii=False).replace('<','\\u003c')+';\n','site/.nojekyll':''}
+    files={'README.md':render_readme(model),'data/growth.json':dump(ledger),'data/profile.json':dump(model)}
     pet=model['pet']
     for theme in ('light','dark'):
         files[f'assets/kouzi-room-{theme}.svg']=room_svg(theme,pet['action'],pet['level'],pet['name'])
         files[f'assets/kouzi-footprints-{theme}.svg']=footprint_svg(model['week'],theme)
-        for action in ('idle','feed','play','sleep'):
-            files[f'site/assets/kouzi-{action}-{theme}.svg']=room_svg(theme,action,pet['level'],pet['name'])
+        files[f'assets/kouzi-passport-{theme}.svg']=passport_svg(model,theme)
+        files[f'assets/kouzi-garden-{theme}.svg']=garden_svg(model.get('calendar',{}),theme)
         for i,repo in enumerate(model['projects']):files[f'assets/project-{i+1}-{theme}.svg']=project_svg(repo,theme)
     return files
 
@@ -367,9 +410,10 @@ def run(root=ROOT, use_git_credential=False):
     repositories=repository_library(raw_repos,config,token)
     ledger=advance_growth(previous,counts,config,today)
     model=model_from(config,ledger,counts,projects,today)
-    model.update({'schema_version':2,'calendar':year,'activity':activity,'organizations':organizations,'repositories':repositories,
+    model.update({'calendar':year,'activity':activity,'organizations':organizations,'repositories':repositories,
                   'public_stats':{'repositories':len(repositories),'stars':sum(r['stars'] for r in repositories)},
                   'visibility_note':'公开数据视角；与你登录后看到的私有贡献及组织信息可能不同。'})
+    enrich_playfulness(model,ledger)
     files=build_files(model,ledger)
     atomic_write_all(root,files)
     print(f'Updated {config["pet_name"]}: Lv. {model["pet"]["level"]}, {model["pet"]["total_xp"]} lifetime XP; {len(projects)} public projects. No secrets written.')
