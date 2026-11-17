@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "username": "William-331",
+  "pet": {
+    "name": "扣子",
+    "adopted_on": "2026-11-17",
+    "level": 1,
+    "title": "初来乍到",
+    "total_xp": 0,
+    "xp_in_level": 0,
+    "xp_to_next": 60,
+    "action": "sleep",
+    "status": "今天在晒太阳，等你回家",
+    "unlocks": [
+      "纸箱与小碗"
+    ]
+  },
+  "today": {
+    "date": "2026-11-17",
+    "contributions": 0,
+    "earned_xp": 0
+  },
+  "week": [
+    {
+      "date": "2026-11-11",
+      "count": 0
+    },
+    {
+      "date": "2026-11-12",
+      "count": 0
+    },
+    {
+      "date": "2026-11-13",
+      "count": 0
+    },
+    {
+      "date": "2026-11-14",
+      "count": 0
+    },
+    {
+      "date": "2026-11-15",
+      "count": 0
+    },
+    {
+      "date": "2026-11-16",
+      "count": 0
+    },
+    {
+      "date": "2026-11-17",
+      "count": 0
+    }
+  ],
+  "projects": [
+    {
+      "name": "William-331.github.io",
+      "url": "https://github.com/William-331/William-331.github.io",
+      "description": "HTML 项目，扣子正在研究中。",
+      "language": "HTML",
+      "updated_on": "2026-09-14",
+      "featured": false
+    },
+    {
+      "name": "hk-stock-trading",
+      "url": "https://github.com/William-331/hk-stock-trading",
+      "description": "TypeScript 项目，扣子正在研究中。",
+      "language": "TypeScript",
+      "updated_on": "2026-09-14",
+      "featured": false
+    },
+    {
+      "name": "kaggle-spaceship-titanic",
+      "url": "https://github.com/William-331/kaggle-spaceship-titanic",
+      "description": "Jupyter Notebook 项目，扣子正在研究中。",
+      "language": "Jupyter Notebook",
+      "updated_on": "2026-07-17",
+      "featured": false
+    },
+    {
+      "name": "ML_PROJECT",
+      "url": "https://github.com/William-331/ML_PROJECT",
+      "description": "Python 项目，扣子正在研究中。",
+      "language": "Python",
+      "updated_on": "2026-07-17",
+      "featured": false
+    }
+  ],
+  "pages_url": "https://william-331.github.io/William-331/",
+  "experience_url": "https://william-331.github.io/",
+  "source": "github",
+  "updated_on": "2026-11-17",
+  "calendar_basis": "GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。"
+}
