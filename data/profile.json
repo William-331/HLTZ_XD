@@ -17,7 +17,7 @@
   },
   "today": {
     "date": "2026-11-17",
-    "contributions": 5,
+    "contributions": 6,
     "earned_xp": 8
   },
   "week": [
@@ -47,7 +47,7 @@
     },
     {
       "date": "2026-11-17",
-      "count": 5
+      "count": 6
     }
   ],
   "projects": [
@@ -88,8 +88,8 @@
   "updated_on": "2026-11-17",
   "calendar_basis": "GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。",
   "calendar": {
-    "total": 108,
-    "active_days": 31,
+    "total": 109,
+    "active_days": 32,
     "start": "2025-11-16",
     "end": "2026-11-17",
     "days": [
@@ -247,11 +247,11 @@
       },
       {
         "date": "2025-12-24",
-        "count": 0
+        "count": 1
       },
       {
         "date": "2025-12-25",
-        "count": 27
+        "count": 26
       },
       {
         "date": "2025-12-26",
@@ -1559,7 +1559,7 @@
       },
       {
         "date": "2026-11-17",
-        "count": 5
+        "count": 6
       }
     ]
   },
@@ -1568,8 +1568,8 @@
       "date": "2026-11-17",
       "kind": "commit",
       "repo": "William-331/William-331",
-      "count": 4,
-      "title": "完成了 4 次提交"
+      "count": 5,
+      "title": "完成了 5 次提交"
     },
     {
       "date": "2026-11-17",
