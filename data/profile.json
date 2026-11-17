@@ -89,7 +89,7 @@
   "calendar_basis": "GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。",
   "calendar": {
     "total": 106,
-    "active_days": 31,
+    "active_days": 32,
     "start": "2025-11-16",
     "end": "2026-11-17",
     "days": [
@@ -247,11 +247,11 @@
       },
       {
         "date": "2025-12-24",
-        "count": 0
+        "count": 1
       },
       {
         "date": "2025-12-25",
-        "count": 27
+        "count": 26
       },
       {
         "date": "2025-12-26",
