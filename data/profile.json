@@ -6,19 +6,19 @@
     "adopted_on": "2026-11-17",
     "level": 1,
     "title": "初来乍到",
-    "total_xp": 0,
-    "xp_in_level": 0,
-    "xp_to_next": 60,
-    "action": "sleep",
-    "status": "今天在晒太阳，等你回家",
+    "total_xp": 5,
+    "xp_in_level": 5,
+    "xp_to_next": 55,
+    "action": "idle",
+    "status": "吃饱了，正在陪你写代码",
     "unlocks": [
       "纸箱与小碗"
     ]
   },
   "today": {
     "date": "2026-11-17",
-    "contributions": 0,
-    "earned_xp": 0
+    "contributions": 2,
+    "earned_xp": 5
   },
   "week": [
     {
@@ -47,7 +47,7 @@
     },
     {
       "date": "2026-11-17",
-      "count": 0
+      "count": 2
     }
   ],
   "projects": [

@@ -4,11 +4,11 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/kouzi-room-dark.svg">
-  <img src="./assets/kouzi-room-light.svg" alt="扣子的像素猫窝：今天在晒太阳，等你回家" width="900">
+  <img src="./assets/kouzi-room-light.svg" alt="扣子的像素猫窝：吃饱了，正在陪你写代码" width="900">
 </picture>
 
 **扣子 · Lv. 1 初来乍到**  
-今天在晒太阳，等你回家。本级经验 **0/60 XP**，再攒 60 XP 就能升级。
+吃饱了，正在陪你写代码。本级经验 **5/60 XP**，再攒 55 XP 就能升级。
 
 [🐟 喂扣子](<https://william-331.github.io/William-331/?action=feed>) · [🧶 陪它玩](<https://william-331.github.io/William-331/?action=play>) · [🌙 一起休息](<https://william-331.github.io/William-331/?action=sleep>)
 
@@ -46,7 +46,7 @@
   <img src="./assets/kouzi-footprints-light.svg" alt="最近七天的贡献足迹；月亮代表休息，猫爪代表有贡献的一天" width="490">
 </picture>
 
-从 **2026-11-17** 开始一起生活，累计 **0 XP**。  
+从 **2026-11-17** 开始一起生活，累计 **5 XP**。  
 **初来乍到** → **键盘学徒** → **代码搭子** → **仓库守护猫**
 
 已解锁：纸箱与小碗。
