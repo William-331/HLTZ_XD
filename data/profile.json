@@ -5,12 +5,12 @@
     "name": "扣子",
     "adopted_on": "2026-11-17",
     "level": 1,
-    "title": "初来乍到",
+    "title": "新住客",
     "total_xp": 8,
     "xp_in_level": 8,
     "xp_to_next": 52,
     "action": "play",
-    "status": "精神很好，和毛线球搏斗中",
+    "status": "摆弄毛线",
     "unlocks": [
       "纸箱与小碗"
     ]
@@ -60,14 +60,6 @@
       "featured": false
     },
     {
-      "name": "hk-stock-trading",
-      "url": "https://github.com/William-331/hk-stock-trading",
-      "description": "天成控股 02110.HK 权证信息查阅与意向管理平台 · 面向内部使用的权证信息查阅与意向管理平台，支持参考估值信息查阅、意向提交、审核流程、每日估值区间图和记录备份。",
-      "language": "TypeScript",
-      "updated_on": "2026-09-14",
-      "featured": false
-    },
-    {
       "name": "kaggle-spaceship-titanic",
       "url": "https://github.com/William-331/kaggle-spaceship-titanic",
       "description": "MLWcode - Spaceship Titanic Ensemble Pipeline · AI3023 Machine Learning Workshop course project. Team closeclaw@MLW.",
@@ -88,8 +80,8 @@
   "updated_on": "2026-11-17",
   "calendar_basis": "GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。",
   "calendar": {
-    "total": 109,
-    "active_days": 32,
+    "total": 55,
+    "active_days": 11,
     "start": "2025-11-16",
     "end": "2026-11-17",
     "days": [
@@ -247,11 +239,11 @@
       },
       {
         "date": "2025-12-24",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2025-12-25",
-        "count": 26
+        "count": 27
       },
       {
         "date": "2025-12-26",
@@ -923,11 +915,11 @@
       },
       {
         "date": "2026-06-11",
-        "count": 13
+        "count": 0
       },
       {
         "date": "2026-06-12",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-06-13",
@@ -935,7 +927,7 @@
       },
       {
         "date": "2026-06-14",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-06-15",
@@ -943,11 +935,11 @@
       },
       {
         "date": "2026-06-16",
-        "count": 3
+        "count": 0
       },
       {
         "date": "2026-06-17",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-06-18",
@@ -967,23 +959,23 @@
       },
       {
         "date": "2026-06-22",
-        "count": 2
+        "count": 0
       },
       {
         "date": "2026-06-23",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-06-24",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-06-25",
-        "count": 6
+        "count": 0
       },
       {
         "date": "2026-06-26",
-        "count": 8
+        "count": 0
       },
       {
         "date": "2026-06-27",
@@ -1007,7 +999,7 @@
       },
       {
         "date": "2026-07-02",
-        "count": 2
+        "count": 0
       },
       {
         "date": "2026-07-03",
@@ -1019,7 +1011,7 @@
       },
       {
         "date": "2026-07-05",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-07-06",
@@ -1051,11 +1043,11 @@
       },
       {
         "date": "2026-07-13",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-07-14",
-        "count": 5
+        "count": 0
       },
       {
         "date": "2026-07-15",
@@ -1095,7 +1087,7 @@
       },
       {
         "date": "2026-07-24",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-07-25",
@@ -1107,7 +1099,7 @@
       },
       {
         "date": "2026-07-27",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-07-28",
@@ -1123,7 +1115,7 @@
       },
       {
         "date": "2026-07-31",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-08-01",
@@ -1235,7 +1227,7 @@
       },
       {
         "date": "2026-08-28",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-08-29",
@@ -1251,7 +1243,7 @@
       },
       {
         "date": "2026-09-01",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2026-09-02",
@@ -1303,7 +1295,7 @@
       },
       {
         "date": "2026-09-14",
-        "count": 3
+        "count": 0
       },
       {
         "date": "2026-09-15",
@@ -1586,48 +1578,6 @@
       "title": "完成了 4 次提交"
     },
     {
-      "date": "2026-09-14",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 3,
-      "title": "完成了 3 次提交"
-    },
-    {
-      "date": "2026-09-01",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-08-28",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-07-31",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-07-27",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-07-24",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
       "date": "2026-07-17",
       "kind": "commit",
       "repo": "William-331/kaggle-spaceship-titanic",
@@ -1645,111 +1595,6 @@
       "date": "2026-07-17",
       "kind": "create",
       "repo": "William-331/kaggle-spaceship-titanic",
-      "count": 1,
-      "title": "开始了新项目"
-    },
-    {
-      "date": "2026-07-14",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 5,
-      "title": "完成了 5 次提交"
-    },
-    {
-      "date": "2026-07-13",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-07-05",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-07-02",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 2,
-      "title": "完成了 2 次提交"
-    },
-    {
-      "date": "2026-06-26",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 8,
-      "title": "完成了 8 次提交"
-    },
-    {
-      "date": "2026-06-25",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 6,
-      "title": "完成了 6 次提交"
-    },
-    {
-      "date": "2026-06-24",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-06-23",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-06-22",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 2,
-      "title": "完成了 2 次提交"
-    },
-    {
-      "date": "2026-06-17",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-06-16",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 3,
-      "title": "完成了 3 次提交"
-    },
-    {
-      "date": "2026-06-14",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-06-12",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 1,
-      "title": "完成了 1 次提交"
-    },
-    {
-      "date": "2026-06-11",
-      "kind": "commit",
-      "repo": "William-331/hk-stock-trading",
-      "count": 12,
-      "title": "完成了 12 次提交"
-    },
-    {
-      "date": "2026-06-11",
-      "kind": "create",
-      "repo": "William-331/hk-stock-trading",
       "count": 1,
       "title": "开始了新项目"
     },
@@ -1853,19 +1698,6 @@
       "featured": false
     },
     {
-      "name": "hk-stock-trading",
-      "url": "https://github.com/William-331/hk-stock-trading",
-      "description": "天成控股 02110.HK 权证信息查阅与意向管理平台 · 面向内部使用的权证信息查阅与意向管理平台，支持参考估值信息查阅、意向提交、审核流程、每日估值区间图和记录备份。",
-      "language": "TypeScript",
-      "updated_on": "2026-09-14",
-      "stars": 0,
-      "forks": 0,
-      "archived": false,
-      "fork": false,
-      "topics": [],
-      "featured": false
-    },
-    {
       "name": "ML_PROJECT",
       "url": "https://github.com/William-331/ML_PROJECT",
       "description": "TP53 基因突变预测 — 基于 METABRIC 乳腺癌 RNA 表达数据 · 本项目从零实现机器学习算法（不调用 scikit-learn 等 ML 库），利用 METABRIC 数据库中 489 个 RNA 基因表达特征 来预测乳腺癌样本的 TP53 抑癌基因突变状态（突变型 / 野生型）。",
@@ -1893,7 +1725,7 @@
     }
   ],
   "public_stats": {
-    "repositories": 5,
+    "repositories": 4,
     "stars": 1
   },
   "visibility_note": "公开数据视角；与你登录后看到的私有贡献及组织信息可能不同。",
@@ -1903,44 +1735,37 @@
     "languages": [
       "HTML",
       "Jupyter Notebook",
-      "Python",
-      "TypeScript"
-    ],
-    "daily_note": "键盘可以让一点位置给猫吗？",
-    "boxes": [
-      "纸箱里只有一张纸条：「扣子刚从这里路过。」",
-      "扣子在这里睡着了。轻一点，别吵醒它。",
-      "你翻到一团会滚走的毛线。扣子宣布：今天的宝藏就是它了！"
+      "Python"
     ],
     "stamps": [
       {
-        "name": "入住纪念",
-        "requirement": "扣子住进主页",
+        "name": "入住",
+        "requirement": "开始记录",
         "unlocked": true
       },
       {
-        "name": "第一口小鱼",
-        "requirement": "累计获得 5 XP",
+        "name": "起步",
+        "requirement": "累计 5 XP",
         "unlocked": true
       },
       {
-        "name": "三日搭子",
-        "requirement": "领养后有 3 个活跃日",
+        "name": "活跃 · 3 天",
+        "requirement": "领养后累计 3 个活跃日",
         "unlocked": false
       },
       {
-        "name": "一周脚印",
-        "requirement": "领养后有 7 个活跃日",
+        "name": "活跃 · 7 天",
+        "requirement": "领养后累计 7 个活跃日",
         "unlocked": false
       },
       {
-        "name": "书架管理员",
+        "name": "项目 · 3 个",
         "requirement": "拥有 3 个公开原创项目",
         "unlocked": true
       },
       {
-        "name": "键盘学徒",
-        "requirement": "成长到 Lv.2",
+        "name": "Lv.2",
+        "requirement": "累计 60 XP",
         "unlocked": false
       }
     ]

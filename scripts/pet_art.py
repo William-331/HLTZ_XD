@@ -39,7 +39,7 @@ def svg_open(width, height, title):
 
 def room_svg(theme='light', action='idle', level=1, name='扣子'):
     p = PALETTES[theme]
-    elements = [svg_open(720, 292, f'{name}的猫窝：' + {'idle':'陪你写代码','feed':'正在吃小鱼','play':'正在玩毛线球','sleep':'正在休息'}[action]), '<style>@keyframes blink{0%,90%,94%,100%{opacity:1}92%{opacity:0}}.eyes{animation:blink 5s step-end infinite}@media(prefers-reduced-motion:reduce){.eyes{animation:none}}</style>', '<g transform="scale(2)" shape-rendering="crispEdges">']
+    elements = [svg_open(720, 292, f'{name}的房间：' + {'idle':'待在桌边','feed':'进食','play':'摆弄毛线','sleep':'休息'}[action]), '<style>@keyframes blink{0%,90%,94%,100%{opacity:1}92%{opacity:0}}.eyes{animation:blink 5s step-end infinite}@media(prefers-reduced-motion:reduce){.eyes{animation:none}}</style>', '<g transform="scale(2)" shape-rendering="crispEdges">']
 
     def r(x,y,w,h,color):
         elements.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="{p.get(color,color)}"/>')
@@ -95,7 +95,7 @@ def room_svg(theme='light', action='idle', level=1, name='扣子'):
 
 def footprint_svg(days, theme='light'):
     p=PALETTES[theme]
-    out=[svg_open(490,104,'扣子最近七天的猫爪足迹；日期与贡献数以 GitHub 贡献日历为准'),f'<rect width="490" height="104" rx="8" fill="{p["paper"]}"/>']
+    out=[svg_open(490,104,'近七天贡献；日期与数量以 GitHub 贡献日历为准'),f'<rect width="490" height="104" rx="8" fill="{p["paper"]}"/>']
     for i,day in enumerate(days):
         x=i*70+35; n=day['count']
         out.append(f'<g><title>{escape(day["date"])}：{n} 次贡献</title>')
@@ -128,7 +128,7 @@ def project_svg(repo, theme='light'):
     def text(x,y,s,size=15,color='ink'):
         out.append(f'<text x="{x}" y="{y}" fill="{p[color]}" font-size="{size}" font-family="Segoe UI,Microsoft YaHei,sans-serif">{escape(str(s))}</text>')
     title=wrap_text(repo['name'],30,1)[0]
-    text(20,30,'KOUZI IS EXPLORING',10,'accent');text(20,57,title,20)
+    text(20,30,'PROJECT',10,'accent');text(20,57,title,20)
     for i,line in enumerate(wrap_text(repo['description'])): text(20,82+i*19,line,14,'muted')
     text(20,135,repo['language']+' · '+repo['updated_on']+' 更新',12,'accent')
     out.append('</svg>');return ''.join(out)
@@ -136,30 +136,30 @@ def project_svg(repo, theme='light'):
 
 def passport_svg(model, theme='light'):
     p=PALETTES[theme];pet=model['pet'];book=model.get('scrapbook',{})
-    out=[svg_open(720,148,'扣子的成长手账'),f'<rect x="1" y="1" width="718" height="146" rx="12" fill="{p["paper"]}" stroke="{p["edge"]}"/>']
+    out=[svg_open(720,148,'扣子的成长记录'),f'<rect x="1" y="1" width="718" height="146" rx="12" fill="{p["paper"]}" stroke="{p["edge"]}"/>']
     def text(x,y,value,size=16,color='ink'):
         out.append(f'<text x="{x}" y="{y}" fill="{p[color]}" font-size="{size}" font-family="Segoe UI,Microsoft YaHei,sans-serif">{escape(str(value))}</text>')
-    text(24,29,'KOUZI / GROWING TOGETHER',11,'accent')
+    text(24,29,'KOUZI / PROFILE',11,'accent')
     text(24,61,f'{pet["name"]} · Lv. {pet["level"]} {pet["title"]}',24)
     text(24,88,f'{pet["xp_in_level"]} / 60 XP · 距下一级 {pet["xp_to_next"]} XP',15,'muted')
     out.append(f'<rect x="24" y="103" width="390" height="10" rx="5" fill="{p["edge"]}"/>')
     progress=390*pet['xp_in_level']/60
     if progress:out.append(f'<rect x="24" y="103" width="{progress:.1f}" height="10" rx="5" fill="{p["accent"]}"/>')
-    text(24,134,f'累计 {pet["total_xp"]} XP · 慢慢长大也很好',13,'muted')
+    text(24,134,f'累计经验 {pet["total_xp"]} XP',13,'muted')
     out.append(f'<path d="M450 25 V123" stroke="{p["edge"]}"/>')
-    text(478,46,f'一起生活第 {book.get("days_together",(date.fromisoformat(model["updated_on"])-date.fromisoformat(pet["adopted_on"])).days+1)} 天',20)
+    text(478,46,f'入住第 {book.get("days_together",(date.fromisoformat(model["updated_on"])-date.fromisoformat(pet["adopted_on"])).days+1)} 天',20)
     collected=sum(s['unlocked'] for s in book.get('stamps',[]))
-    text(478,77,f'已收藏 {collected} / {len(book.get("stamps",[]))} 枚印章',17,'accent')
-    text(478,107,'今天有代码，也有猫。',16,'muted')
+    text(478,77,f'里程碑 {collected} / {len(book.get("stamps",[]))}',17,'accent')
+    text(478,107,'当前：'+pet['status'],16,'muted')
     out.append('</svg>');return ''.join(out)
 
 
 def garden_svg(calendar, theme='light'):
     p=PALETTES[theme];days=calendar.get('days',[])
-    out=[svg_open(780,205,'全年猫爪花园'),f'<rect width="780" height="205" rx="12" fill="{p["paper"]}"/>']
+    out=[svg_open(780,205,'全年贡献'),f'<rect width="780" height="205" rx="12" fill="{p["paper"]}"/>']
     def text(x,y,value,size=13,color='muted'):
         out.append(f'<text x="{x}" y="{y}" font-family="Segoe UI,Microsoft YaHei,sans-serif" font-size="{size}" fill="{p[color]}">{escape(str(value))}</text>')
-    text(22,28,'KOUZI’S PAW GARDEN',12,'accent')
+    text(22,28,'CONTRIBUTIONS / YEAR',12,'accent')
     text(22,52,f'{calendar.get("total",0)} 次贡献 · {calendar.get("active_days",0)} 个活跃日',21,'ink')
     if days:
         text(480,50,f'{days[0]["date"]} — {days[-1]["date"]}',13)
@@ -171,7 +171,7 @@ def garden_svg(calendar, theme='light'):
             if value>=10:out.append(f'<circle cx="{x+5}" cy="{y+5}" r="1.4" fill="{p["paper"]}"/>')
             if day['date'].endswith('-01') or i==0:text(x,73,day['date'][5:7]+'月',10)
         for row,label in ((1,'一'),(3,'三'),(5,'五')):text(21,90+row*13,label,11)
-    text(22,189,'每一格都是一起走过的一天。',12)
+    text(22,189,'颜色表示每日贡献量。',12)
     text(590,189,'少',12)
     for i,fill in enumerate((p['edge'],p['leaf'],p['rug'],p['accent'])):
         out.append(f'<rect x="{613+i*17}" y="178" width="11" height="11" rx="2" fill="{fill}"/>')

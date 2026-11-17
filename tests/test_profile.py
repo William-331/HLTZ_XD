@@ -50,12 +50,12 @@ class GrowthTests(unittest.TestCase):
 
     def test_growth_milestones(self):
         counts={(TODAY-timedelta(days=i)).isoformat():0 for i in range(7)}
-        for total,level,title in ((0,1,'初来乍到'),(60,2,'键盘学徒'),(180,4,'代码搭子'),(300,6,'仓库守护猫')):
+        for total,level,title in ((0,1,'新住客'),(60,2,'常住客'),(180,4,'老朋友'),(300,6,'长期室友')):
             ledger={'days':{str(i):{'xp':10} for i in range(total//10)}}
             model=p.model_from(CONFIG,ledger,counts,[],TODAY)
             self.assertEqual((model['pet']['level'],model['pet']['title']),(level,title))
             self.assertEqual(model['pet']['xp_in_level'],0)
-            if level==6:self.assertIn('仓库守护猫纪念画',model['pet']['unlocks'])
+            if level==6:self.assertIn('墙上挂画',model['pet']['unlocks'])
 
 
 class ProjectsTests(unittest.TestCase):
@@ -175,7 +175,7 @@ class ReadmeHomeTests(unittest.TestCase):
         original=deepcopy(ledger)
         self.assertEqual(model,p.enrich_playfulness(deepcopy(model),ledger))
         self.assertEqual(ledger,original)
-        self.assertEqual(sum('宝藏' in box for box in book['boxes']),1)
+        self.assertEqual(len(book['stamps']),6)
 
     def test_readme_has_no_website_redirect_or_fake_controls_and_is_self_contained(self):
         model,ledger=self.model()
