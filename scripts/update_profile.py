@@ -6,6 +6,7 @@ Never pass a token as a command-line argument or store one in generated files.
 from __future__ import annotations
 
 import argparse
+import base64
 from datetime import date, datetime, timedelta, timezone
 from html import escape
 import json
@@ -179,9 +180,44 @@ def repository_library(raw, config, token):
               'archived':bool(repo.get('archived')),'fork':bool(repo.get('fork')),
               'topics':[clean(t,50) for t in repo.get('topics',[])],
               'featured':config.get('featured_topic','kouzi-featured') in repo.get('topics',[])}
+        # An automatic plain-text synopsis is enough for the profile; never copy a whole README.
+        if not repo.get('description') and name.lower()!=config['username'].lower():
+            try:
+                document=api_json(f'/repos/{config["username"]}/{urllib.parse.quote(name,safe="")}/readme',token)
+                if document.get('encoding')=='base64':
+                    body=base64.b64decode(document.get('content','')).decode('utf-8',errors='replace')
+                    item['description']=readme_synopsis(body) or item['description']
+            except ProfileError as exc:
+                if 'HTTP 404' not in str(exc):raise
         result.append(item)
     result.sort(key=lambda r:(r['featured'],r['updated_on'],r['name'].lower()),reverse=True)
     return result
+
+
+def readme_synopsis(body):
+    """Extract a short readable heading/paragraph, never execute Markdown or HTML."""
+    heading='';paragraph=[];fenced=False
+    for raw in body[:24000].splitlines():
+        line=raw.strip()
+        if line.startswith(('```','~~~')):
+            if paragraph:break
+            fenced=not fenced;continue
+        if fenced:continue
+        if not line:
+            if paragraph:break
+            continue
+        if line.startswith(('<','![','[!','|','>','- ','* ')):continue
+        line=re.sub(r'!\[[^\]]*\]\([^)]*\)','',line)
+        line=re.sub(r'\[([^\]]+)\]\([^)]*\)',r'\1',line)
+        line=re.sub(r'https?://\S+','',line)
+        line=line.replace('**','').replace('`','').strip()
+        if line.startswith('#'):
+            if paragraph:break
+            if not heading:heading=line.lstrip('#').strip()
+            continue
+        if line:paragraph.append(line)
+        if sum(map(len,paragraph))>=180:break
+    return clean(' · '.join(filter(None,(heading,' '.join(paragraph)))),180)
 
 
 def parse_year(collection, today):
@@ -338,7 +374,7 @@ def render_readme(model):
     lines.extend(['', '<details>', '<summary>🎁 翻一翻今天的纸箱</summary>', '', '选一个纸箱打开看看；每天换一组小故事。', ''])
     for i,text in enumerate(book.get('boxes',[]),1):
         lines.extend(['<details>', f'<summary>📦 第 {i} 个纸箱</summary>', '', md_text(text), '', '</details>', ''])
-    lines.extend(['</details>', '', '## 扣子正在研究的项目', '', '新项目会自动入架；没有简介时，扣子会根据主要语言写一句通用介绍。', ''])
+    lines.extend(['</details>', '', '## 扣子正在研究的项目', '', '新项目会自动入架；简介优先取自仓库说明，再从 README 提取摘要，最后按语言生成通用介绍。', ''])
     lines.append('<table>')
     for i in range(0,len(model['projects']),2):
         lines.append('<tr>')
@@ -408,6 +444,8 @@ def run(root=ROOT, use_git_credential=False):
     counts=fetch_days(config,previous,token,now,seed={d['date']:d['count'] for d in year['days']})
     organizations=fetch_organizations(config,token)
     repositories=repository_library(raw_repos,config,token)
+    descriptions={r['name']:r['description'] for r in repositories}
+    for project in projects:project['description']=descriptions.get(project['name'],project['description'])
     ledger=advance_growth(previous,counts,config,today)
     model=model_from(config,ledger,counts,projects,today)
     model.update({'calendar':year,'activity':activity,'organizations':organizations,'repositories':repositories,

@@ -139,12 +139,16 @@ class IntegratedHomeTests(unittest.TestCase):
         self.assertEqual([r['repo'] for r in result],['William-331/new','William-331/old'])
         self.assertNotIn('private',json.dumps(result))
 
-    def test_repository_library_stays_public_without_fetching_unneeded_readmes(self):
-        with patch.object(p,'api_json',side_effect=AssertionError('Unexpected request')) as mocked:
+    def test_repository_library_stays_public_and_retains_only_a_plain_synopsis(self):
+        import base64
+        document='# Useful project\n\nA [small tool](https://example.com).\n\n## Installation\n\nsecret-ish long notes'
+        response={'encoding':'base64','content':base64.b64encode(document.encode()).decode()}
+        with patch.object(p,'api_json',return_value=response) as mocked:
             result=p.repository_library([repo('private',private=True),repo('public')],CONFIG,'test')
-        self.assertEqual(mocked.call_count,0)
+        self.assertEqual(mocked.call_count,1)
         self.assertEqual([r['name'] for r in result],['public'])
         self.assertNotIn('readme',result[0])
+        self.assertEqual(result[0]['description'],'Useful project · A small tool.')
 
     def test_year_seed_avoids_redundant_calendar_requests(self):
         calendar=p.parse_year(self.year_collection(),TODAY)

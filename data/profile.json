@@ -6,19 +6,19 @@
     "adopted_on": "2026-11-17",
     "level": 1,
     "title": "初来乍到",
-    "total_xp": 5,
-    "xp_in_level": 5,
-    "xp_to_next": 55,
-    "action": "idle",
-    "status": "吃饱了，正在陪你写代码",
+    "total_xp": 8,
+    "xp_in_level": 8,
+    "xp_to_next": 52,
+    "action": "play",
+    "status": "精神很好，和毛线球搏斗中",
     "unlocks": [
       "纸箱与小碗"
     ]
   },
   "today": {
     "date": "2026-11-17",
-    "contributions": 3,
-    "earned_xp": 5
+    "contributions": 4,
+    "earned_xp": 8
   },
   "week": [
     {
@@ -47,14 +47,14 @@
     },
     {
       "date": "2026-11-17",
-      "count": 3
+      "count": 4
     }
   ],
   "projects": [
     {
       "name": "William-331.github.io",
       "url": "https://github.com/William-331/William-331.github.io",
-      "description": "HTML 项目，扣子正在研究中。",
+      "description": "Aurora 3D Christmas Tree · 一个基于 Three.js 的单页 3D 圣诞树互动网站。页面展示可在圣诞树与星云形态之间切换的粒子场景，并将图片与音乐组合成可浏览的节日相册。",
       "language": "HTML",
       "updated_on": "2026-09-14",
       "featured": false
@@ -62,7 +62,7 @@
     {
       "name": "hk-stock-trading",
       "url": "https://github.com/William-331/hk-stock-trading",
-      "description": "TypeScript 项目，扣子正在研究中。",
+      "description": "天成控股 02110.HK 权证信息查阅与意向管理平台 · 面向内部使用的权证信息查阅与意向管理平台，支持参考估值信息查阅、意向提交、审核流程、每日估值区间图和记录备份。",
       "language": "TypeScript",
       "updated_on": "2026-09-14",
       "featured": false
@@ -70,7 +70,7 @@
     {
       "name": "kaggle-spaceship-titanic",
       "url": "https://github.com/William-331/kaggle-spaceship-titanic",
-      "description": "Jupyter Notebook 项目，扣子正在研究中。",
+      "description": "MLWcode - Spaceship Titanic Ensemble Pipeline · AI3023 Machine Learning Workshop course project. Team closeclaw@MLW.",
       "language": "Jupyter Notebook",
       "updated_on": "2026-07-17",
       "featured": false
@@ -78,7 +78,7 @@
     {
       "name": "ML_PROJECT",
       "url": "https://github.com/William-331/ML_PROJECT",
-      "description": "Python 项目，扣子正在研究中。",
+      "description": "TP53 基因突变预测 — 基于 METABRIC 乳腺癌 RNA 表达数据 · 本项目从零实现机器学习算法（不调用 scikit-learn 等 ML 库），利用 METABRIC 数据库中 489 个 RNA 基因表达特征 来预测乳腺癌样本的 TP53 抑癌基因突变状态（突变型 / 野生型）。",
       "language": "Python",
       "updated_on": "2026-07-17",
       "featured": false
@@ -88,8 +88,8 @@
   "updated_on": "2026-11-17",
   "calendar_basis": "GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。",
   "calendar": {
-    "total": 106,
-    "active_days": 32,
+    "total": 107,
+    "active_days": 31,
     "start": "2025-11-16",
     "end": "2026-11-17",
     "days": [
@@ -247,11 +247,11 @@
       },
       {
         "date": "2025-12-24",
-        "count": 1
+        "count": 0
       },
       {
         "date": "2025-12-25",
-        "count": 26
+        "count": 27
       },
       {
         "date": "2025-12-26",
@@ -1559,7 +1559,7 @@
       },
       {
         "date": "2026-11-17",
-        "count": 3
+        "count": 4
       }
     ]
   },
@@ -1568,8 +1568,8 @@
       "date": "2026-11-17",
       "kind": "commit",
       "repo": "William-331/William-331",
-      "count": 2,
-      "title": "完成了 2 次提交"
+      "count": 3,
+      "title": "完成了 3 次提交"
     },
     {
       "date": "2026-11-17",
@@ -1842,7 +1842,7 @@
     {
       "name": "William-331.github.io",
       "url": "https://github.com/William-331/William-331.github.io",
-      "description": "HTML项目，扣子正在研究中。",
+      "description": "Aurora 3D Christmas Tree · 一个基于 Three.js 的单页 3D 圣诞树互动网站。页面展示可在圣诞树与星云形态之间切换的粒子场景，并将图片与音乐组合成可浏览的节日相册。",
       "language": "HTML",
       "updated_on": "2026-09-14",
       "stars": 1,
@@ -1855,7 +1855,7 @@
     {
       "name": "hk-stock-trading",
       "url": "https://github.com/William-331/hk-stock-trading",
-      "description": "TypeScript项目，扣子正在研究中。",
+      "description": "天成控股 02110.HK 权证信息查阅与意向管理平台 · 面向内部使用的权证信息查阅与意向管理平台，支持参考估值信息查阅、意向提交、审核流程、每日估值区间图和记录备份。",
       "language": "TypeScript",
       "updated_on": "2026-09-14",
       "stars": 0,
@@ -1868,7 +1868,7 @@
     {
       "name": "ML_PROJECT",
       "url": "https://github.com/William-331/ML_PROJECT",
-      "description": "Python项目，扣子正在研究中。",
+      "description": "TP53 基因突变预测 — 基于 METABRIC 乳腺癌 RNA 表达数据 · 本项目从零实现机器学习算法（不调用 scikit-learn 等 ML 库），利用 METABRIC 数据库中 489 个 RNA 基因表达特征 来预测乳腺癌样本的 TP53 抑癌基因突变状态（突变型 / 野生型）。",
       "language": "Python",
       "updated_on": "2026-07-17",
       "stars": 0,
@@ -1881,7 +1881,7 @@
     {
       "name": "kaggle-spaceship-titanic",
       "url": "https://github.com/William-331/kaggle-spaceship-titanic",
-      "description": "Jupyter Notebook项目，扣子正在研究中。",
+      "description": "MLWcode - Spaceship Titanic Ensemble Pipeline · AI3023 Machine Learning Workshop course project. Team closeclaw@MLW.",
       "language": "Jupyter Notebook",
       "updated_on": "2026-07-17",
       "stars": 0,
