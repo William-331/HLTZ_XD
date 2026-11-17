@@ -21,7 +21,7 @@
   <img src="./assets/kouzi-footprints-light.svg" alt="最近七天的贡献足迹" width="630">
 </picture>
 
-今天 **4** 次贡献 · 今日已记 **8 XP** · 精神很好，和毛线球搏斗中
+今天 **5** 次贡献 · 今日已记 **8 XP** · 精神很好，和毛线球搏斗中
 
 <details>
 <summary>🌱 翻开全年猫爪花园</summary>
@@ -114,7 +114,7 @@
 
 | 项目 | 技术 | 最近推送 | 简介 |
 | :--- | :--- | :--- | :--- |
-| William-331 | Python | 2026-11-17 | William and Kouzi — a little cat home that grows with GitHub contributions. |
+| William-331 | Python | 2026-11-17 | William &#38; Kouzi — a little cat growing with GitHub contributions, right in the profile README. |
 | William-331.github.io | HTML | 2026-09-14 | Aurora 3D Christmas Tree · 一个基于 Three.js 的单页 3D 圣诞树互动网站。页面展示可在圣诞树与星云形态之间切换的粒子场景，并将图片与音乐组合成可浏览的节日相册。 |
 | hk-stock-trading | TypeScript | 2026-09-14 | 天成控股 02110.HK 权证信息查阅与意向管理平台 · 面向内部使用的权证信息查阅与意向管理平台，支持参考估值信息查阅、意向提交、审核流程、每日估值区间图和记录备份。 |
 | ML&#95;PROJECT | Python | 2026-07-17 | TP53 基因突变预测 — 基于 METABRIC 乳腺癌 RNA 表达数据 · 本项目从零实现机器学习算法（不调用 scikit-learn 等 ML 库），利用 METABRIC 数据库中 489 个 RNA 基因表达特征 来预测乳腺癌样本的 TP53 抑癌基因突变状态（突变型 / 野生型）。 |
@@ -128,7 +128,7 @@
 
 | 日期 | 扣子记下的事情 |
 | :--- | :--- |
-| 2026-11-17 | William-331/William-331 · 完成了 3 次提交 |
+| 2026-11-17 | William-331/William-331 · 完成了 4 次提交 |
 | 2026-11-17 | William-331/William-331 · 开始了新项目 |
 | 2026-09-15 | William-331/William-331.github.io · 完成了 4 次提交 |
 | 2026-09-14 | William-331/hk-stock-trading · 完成了 3 次提交 |
