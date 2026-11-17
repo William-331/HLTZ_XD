@@ -6,6 +6,7 @@ Never pass a token as a command-line argument or store one in generated files.
 from __future__ import annotations
 
 import argparse
+import base64
 from datetime import date, datetime, timedelta, timezone
 from html import escape
 import json
@@ -28,6 +29,29 @@ GRAPHQL = '''query($login: String!, $from: DateTime!, $to: DateTime!) {
   user(login: $login) {
     contributionsCollection(from: $from, to: $to) {
       contributionCalendar { weeks { contributionDays { date contributionCount } } }
+    }
+  }
+}'''
+YEAR_QUERY = '''query($login: String!) {
+  user(login: $login) {
+    contributionsCollection {
+      contributionCalendar {
+        totalContributions
+        weeks { contributionDays { date contributionCount } }
+      }
+      commitContributionsByRepository(maxRepositories: 100) {
+        repository { nameWithOwner url isPrivate }
+        contributions(last: 100) { nodes { occurredAt commitCount } }
+      }
+      issueContributions(last: 30) {
+        nodes { occurredAt issue { title url repository { nameWithOwner isPrivate } } }
+      }
+      pullRequestContributions(last: 30) {
+        nodes { occurredAt pullRequest { title url repository { nameWithOwner isPrivate } } }
+      }
+      repositoryContributions(last: 30) {
+        nodes { occurredAt repository { nameWithOwner url isPrivate } }
+      }
     }
   }
 }'''
@@ -131,26 +155,117 @@ def select_projects(repos, config):
     return result
 
 
-def fetch_projects(config, token):
+def fetch_raw_repositories(config, token):
     repos=[]
     for page in range(1,101):
         batch=api_json(f'/users/{config["username"]}/repos?per_page=100&sort=pushed&type=owner&page={page}',token)
         if not isinstance(batch,list): raise ProfileError('Unexpected GitHub repositories response.')
         repos.extend(batch)
-        if len(batch)<100: return select_projects(repos,config)
+        if len(batch)<100:
+            return [r for r in repos if not r.get('private') and r.get('owner',{}).get('login','').lower()==config['username'].lower()]
     raise ProfileError('Repository pagination exceeded the supported limit; no partial list was published.')
 
 
-def fetch_days(config, ledger, token, now):
+def fetch_projects(config, token):
+    return select_projects(fetch_raw_repositories(config,token),config)
+
+
+def repository_library(raw, config, token):
+    result=[]
+    for repo in raw:
+        if repo.get('private') or repo.get('owner',{}).get('login','').lower()!=config['username'].lower():continue
+        name=clean(repo['name'],100)
+        item={'name':name,'url':f'https://github.com/{config["username"]}/{urllib.parse.quote(name,safe="")}',
+              'description':clean(repo.get('description')) or f'{clean(repo.get("language")) or "新"}项目，扣子正在研究中。',
+              'language':clean(repo.get('language'),40) or '尚未标注',
+              'updated_on':(repo.get('pushed_at') or repo.get('updated_at') or '')[:10],
+              'stars':repo.get('stargazers_count',0),'forks':repo.get('forks_count',0),
+              'archived':bool(repo.get('archived')),'fork':bool(repo.get('fork')),
+              'topics':[clean(t,50) for t in repo.get('topics',[])],
+              'featured':config.get('featured_topic','kouzi-featured') in repo.get('topics',[])}
+        try:
+            readme=api_json(f'/repos/{config["username"]}/{urllib.parse.quote(name,safe="")}/readme',token)
+            if readme.get('encoding')=='base64':
+                content=base64.b64decode(readme.get('content',''),validate=False).decode('utf-8',errors='replace')
+                item['readme']=content[:24000]
+                item['readme_truncated']=len(content)>24000
+            else:
+                item['readme']='';item['readme_truncated']=False
+        except ProfileError as exc:
+            if 'HTTP 404' not in str(exc):raise
+            item['readme']='';item['readme_truncated']=False
+        result.append(item)
+    result.sort(key=lambda r:(r['featured'],r['updated_on'],r['name'].lower()),reverse=True)
+    return result
+
+
+def parse_year(collection, today):
+    try:
+        calendar=collection['contributionCalendar']
+        days=[]
+        for week in calendar['weeks']:
+            for day in week['contributionDays']:
+                d=date.fromisoformat(day['date']);count=day['contributionCount']
+                if not isinstance(count,int) or isinstance(count,bool) or count<0:raise ValueError('count')
+                if d<=today:days.append({'date':d.isoformat(),'count':count})
+        days.sort(key=lambda d:d['date'])
+        dates=[date.fromisoformat(d['date']) for d in days]
+        if not 360<=len(days)<=380 or len(set(dates))!=len(dates):raise ValueError('range')
+        if dates[-1]!=today or (dates[-1]-dates[0]).days+1!=len(days):raise ValueError('missing dates')
+        total=calendar['totalContributions']
+        if not isinstance(total,int) or total<0:raise ValueError('total')
+    except (KeyError,TypeError,ValueError,IndexError):
+        raise ProfileError('Yearly calendar is incomplete or malformed; existing data was kept.') from None
+    return {'total':total,'active_days':sum(d['count']>0 for d in days),'start':days[0]['date'],'end':days[-1]['date'],'days':days}
+
+
+def activity_from_contributions(collection):
+    """Public contribution history, independent of the short-lived Events feed."""
+    entries=[]
+    for group in collection.get('commitContributionsByRepository',[]):
+        repo=group['repository']
+        if repo.get('isPrivate',True):continue
+        for node in group['contributions']['nodes']:
+            entries.append({'date':node['occurredAt'][:10],'kind':'commit','repo':clean(repo['nameWithOwner'],150),'count':node['commitCount'],'title':f'完成了 {node["commitCount"]} 次提交'})
+    for key,child,kind,label in (('issueContributions','issue','issue','提出了 Issue'),('pullRequestContributions','pullRequest','pr','发起了 Pull Request'),('repositoryContributions','repository','create','开始了新项目')):
+        for node in collection.get(key,{}).get('nodes',[]):
+            value=node[child];repo=value if child=='repository' else value['repository']
+            if repo.get('isPrivate',True):continue
+            entries.append({'date':node['occurredAt'][:10],'kind':kind,'repo':clean(repo['nameWithOwner'],150),'count':1,'title':label+(('：'+clean(value.get('title'),200)) if child!='repository' else '')})
+    return sorted(entries,key=lambda e:(e['date'],e['kind']=='commit',e['repo']),reverse=True)[:60]
+
+
+def fetch_year(config, token, today):
+    result=api_json('/graphql',token,{'query':YEAR_QUERY,'variables':{'login':config['username']}})
+    try:collection=result['data']['user']['contributionsCollection']
+    except (KeyError,TypeError):raise ProfileError('GitHub did not return the yearly calendar.') from None
+    return parse_year(collection,today),activity_from_contributions(collection)
+
+
+def fetch_organizations(config, token):
+    organizations=[]
+    for page in range(1,101):
+        rows=api_json(f'/users/{config["username"]}/orgs?per_page=100&page={page}',token)
+        if not isinstance(rows,list):raise ProfileError('GitHub did not return public organizations.')
+        organizations.extend({'login':clean(r['login'],100),'description':clean(r.get('description'),180),'url':'https://github.com/'+urllib.parse.quote(r['login'],safe='')} for r in rows)
+        if len(rows)<100:return organizations
+    raise ProfileError('Public organization pagination exceeded the supported limit.')
+
+
+def fetch_days(config, ledger, token, now, seed=None):
     today=now.date()
     adopted=date.fromisoformat(config['adopted_on'])
     synced=date.fromisoformat(ledger.get('synced_through',config['adopted_on']))
     start=min(max(adopted,synced-timedelta(days=35)),today-timedelta(days=6))
     all_days={}
+    seed=seed or {}
     while start<=today:
         end=min(today,start+timedelta(days=364))
         to_value=now.isoformat().replace('+00:00','Z') if end==today else end.isoformat()+'T23:59:59Z'
         payload={'query':GRAPHQL,'variables':{'login':config['username'],'from':start.isoformat()+'T00:00:00Z','to':to_value}}
+        expected={ (start+timedelta(days=i)).isoformat() for i in range((end-start).days+1) }
+        if expected.issubset(seed):
+            all_days.update({d:seed[d] for d in expected});start=end+timedelta(days=1);continue
         result=api_json('/graphql',token,payload)
         try:
             weeks=result['data']['user']['contributionsCollection']['contributionCalendar']['weeks']
@@ -162,7 +277,6 @@ def fetch_days(config, ledger, token, now):
                     if start<=day<=end: all_days[day.isoformat()]=count
         except (KeyError,TypeError,ValueError):
             raise ProfileError('GitHub contribution data was incomplete or malformed; no files were changed.') from None
-        expected={ (start+timedelta(days=i)).isoformat() for i in range((end-start).days+1) }
         if not expected.issubset(all_days):
             raise ProfileError('GitHub omitted contribution dates; no missing dates were silently treated as zero.')
         start=end+timedelta(days=1)
@@ -204,16 +318,17 @@ def picture(base, alt, width=900):
 
 def render_readme(model):
     pet=model['pet'];name=pet['name']
-    lines=[f'# I build things. {name}负责监工。','',f'你好，我是 William。写点代码，也养一只叫 **{name}** 的小猫。','',picture('kouzi-room',f'{name}的像素猫窝：{pet["status"]}'),'',f'**{name} · Lv. {pet["level"]} {pet["title"]}**  ',f'{pet["status"]}。本级经验 **{pet["xp_in_level"]}/60 XP**，再攒 {pet["xp_to_next"]} XP 就能升级。','',f'[🐟 喂{name}](<{model["pages_url"]}?action=feed>) · [🧶 陪它玩](<{model["pages_url"]}?action=play>) · [🌙 一起休息](<{model["pages_url"]}?action=sleep>)','', '休息不掉级。你忙的时候，它就在家晒太阳。','',f'## {name}最近在研究什么','', '<!-- AUTO-GENERATED: repository metadata, never edit individual project cards. -->','']
-    if model['projects']:
-        lines.append('<p>')
-        for i,repo in enumerate(model['projects']):
-            lines.append(f'<a href="{escape(repo["url"],quote=True)}">{picture(f"project-{i+1}",repo["name"]+" — "+repo["description"],420)}</a>')
-        lines.extend(['</p>',''])
-    else:lines.extend(['小猫正在等第一个项目。公开、非 fork、未归档且非空的仓库会自动出现在这里。',''])
-    lines.extend(['<sub>自动展示最近更新的项目；给仓库添加 `kouzi-featured` Topic 可优先展示。</sub>','','## 一起长大','',picture('kouzi-footprints','最近七天的贡献足迹；月亮代表休息，猫爪代表有贡献的一天',490),'',f'从 **{pet["adopted_on"]}** 开始一起生活，累计 **{pet["total_xp"]} XP**。  ', '**初来乍到** → **键盘学徒** → **代码搭子** → **仓库守护猫**','',f'已解锁：{"、".join(pet["unlocks"])}。','', '<details>','<summary>扣子是怎么长大的？</summary>','', '| 当日贡献数 | 经验 |','| --- | --- |','| 0 | 0 XP，安心休息 |','| 1–3 | 5 XP |','| 4–9 | 8 XP |','| 10 或更多 | 10 XP |','','每级 60 XP；每天最多 10 XP，同一天重复同步不会重复加分。贡献只从领养日起计入，已获得的经验不会因休息或后续贡献修订而扣除。','','等级 2 解锁猫窝、毛线球和绿植；等级 4 解锁窗边坐垫；等级 6 解锁纪念画。独立猫窝里的喂食和玩耍只改变本机互动状态，不增加真实经验。','','</details>','', f'<sub>数据同步：{model["updated_on"]} · 按 GitHub 贡献日历统计 · 每日自动更新，可能有延迟。</sub>','', f'[GitHub](https://github.com/{model["username"]}) · [去扣子家坐坐]({model["pages_url"]}) · [Interactive Experience]({model["experience_url"]})',''])
-    if model['source']!='github':lines.insert(2,'> 演示数据：尚未连接 GitHub，不代表实际成长进度。\n')
-    return '\n'.join(lines)
+    # GitHub is a clearly labelled gateway; the complete experience lives on Pages.
+    return '\n'.join([
+        f'# William & {name}', '',
+        f'写点代码，也养一只叫 **{name}** 的小猫。', '',
+        f'## [进入扣子的完整主页 →]({model["pages_url"]})', '',
+        '养猫互动、仓库书架、全年猫爪日历和近期活动，都在同一个主页里。', '',
+        f'<a href="{escape(model["pages_url"],quote=True)}">{picture("kouzi-room",name+"的猫窝",900)}</a>', '',
+        f'**{name} · Lv. {pet["level"]} {pet["title"]}** · {pet["xp_in_level"]}/60 XP',
+        '跟着 GitHub 的每日贡献慢慢长大，休息不掉级。', '',
+        f'<sub>最后同步：{model["updated_on"]} · 这里是主页入口，完整互动在上方链接中。</sub>', ''
+    ])
 
 
 def build_files(model, ledger):
@@ -244,10 +359,17 @@ def run(root=ROOT, use_git_credential=False):
     ledger_path=root/'data/growth.json'
     previous=read_json(ledger_path) if ledger_path.exists() else {}
     token=get_token(use_git_credential)
-    projects=fetch_projects(config,token)
-    counts=fetch_days(config,previous,token,now)
+    raw_repos=fetch_raw_repositories(config,token)
+    projects=select_projects(raw_repos,config)
+    year,activity=fetch_year(config,token,today)
+    counts=fetch_days(config,previous,token,now,seed={d['date']:d['count'] for d in year['days']})
+    organizations=fetch_organizations(config,token)
+    repositories=repository_library(raw_repos,config,token)
     ledger=advance_growth(previous,counts,config,today)
     model=model_from(config,ledger,counts,projects,today)
+    model.update({'schema_version':2,'calendar':year,'activity':activity,'organizations':organizations,'repositories':repositories,
+                  'public_stats':{'repositories':len(repositories),'stars':sum(r['stars'] for r in repositories)},
+                  'visibility_note':'公开数据视角；与你登录后看到的私有贡献及组织信息可能不同。'})
     files=build_files(model,ledger)
     atomic_write_all(root,files)
     print(f'Updated {config["pet_name"]}: Lv. {model["pet"]["level"]}, {model["pet"]["total_xp"]} lifetime XP; {len(projects)} public projects. No secrets written.')

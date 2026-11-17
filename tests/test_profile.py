@@ -90,7 +90,7 @@ class ReliabilityTests(unittest.TestCase):
             (root/'README.md').write_text('existing profile',encoding='utf-8')
             (root/'data/growth.json').write_text(json.dumps({'adopted_on':'2026-11-17','days':{}}),encoding='utf-8')
             before={str(f.relative_to(root)):f.read_bytes() for f in root.rglob('*') if f.is_file()}
-            with patch.object(p,'get_token',return_value='not-a-real-token'),patch.object(p,'fetch_projects',side_effect=p.ProfileError('API unavailable')):
+            with patch.object(p,'get_token',return_value='not-a-real-token'),patch.object(p,'fetch_raw_repositories',side_effect=p.ProfileError('API unavailable')):
                 with self.assertRaises(p.ProfileError):p.run(root)
             after={str(f.relative_to(root)):f.read_bytes() for f in root.rglob('*') if f.is_file()}
             self.assertEqual(before,after)
@@ -106,6 +106,56 @@ class ReliabilityTests(unittest.TestCase):
                 node=ET.fromstring(content)
                 self.assertFalse(any(e.tag.endswith('script') or e.tag.endswith('foreignObject') for e in node.iter()))
         self.assertNotIn('<script>',files['site/data.js'])
+
+
+class IntegratedHomeTests(unittest.TestCase):
+    def year_collection(self):
+        days=[{'date':(TODAY-timedelta(days=i)).isoformat(),'contributionCount':1 if i%7==0 else 0} for i in range(364,-1,-1)]
+        return {'contributionCalendar':{'totalContributions':sum(d['contributionCount'] for d in days),'weeks':[{'contributionDays':days}]}}
+
+    def test_year_calendar_is_complete_and_does_not_award_pre_adoption_xp(self):
+        calendar=p.parse_year(self.year_collection(),TODAY)
+        self.assertEqual(len(calendar['days']),365)
+        self.assertEqual(calendar['total'],53)
+        growth=p.advance_growth({},dict((d['date'],d['count']) for d in calendar['days']),CONFIG,TODAY)
+        self.assertEqual(set(growth['days']),{'2026-11-17'})
+        self.assertEqual(growth['days']['2026-11-17']['xp'],5)
+
+    def test_year_missing_day_or_duplicate_is_rejected(self):
+        collection=self.year_collection()
+        days=collection['contributionCalendar']['weeks'][0]['contributionDays']
+        del days[123]
+        with self.assertRaises(p.ProfileError):p.parse_year(collection,TODAY)
+        collection=self.year_collection()
+        days=collection['contributionCalendar']['weeks'][0]['contributionDays']
+        days[123]=dict(days[124])
+        with self.assertRaises(p.ProfileError):p.parse_year(collection,TODAY)
+
+    def test_recent_activity_filters_private_repositories_and_sorts_dates(self):
+        def group(name,private,day):
+            return {'repository':{'nameWithOwner':name,'isPrivate':private},'contributions':{'nodes':[{'occurredAt':day+'T00:00:00Z','commitCount':2}]}}
+        collection={'commitContributionsByRepository':[group('William-331/private',True,'2026-11-17'),group('William-331/old',False,'2026-07-17'),group('William-331/new',False,'2026-11-17')]}
+        result=p.activity_from_contributions(collection)
+        self.assertEqual([r['repo'] for r in result],['William-331/new','William-331/old'])
+        self.assertNotIn('private',json.dumps(result))
+
+    def test_repository_notes_stay_public_and_are_size_limited(self):
+        import base64
+        content='<script>untrusted()</script>\n'+'x'*25000
+        response={'encoding':'base64','content':base64.b64encode(content.encode()).decode()}
+        with patch.object(p,'api_json',return_value=response) as mocked:
+            result=p.repository_library([repo('private',private=True),repo('public')],CONFIG,'test')
+        self.assertEqual(mocked.call_count,1)
+        self.assertEqual([r['name'] for r in result],['public'])
+        self.assertTrue(result[0]['readme_truncated'])
+        self.assertEqual(len(result[0]['readme']),24000)
+
+    def test_year_seed_avoids_redundant_calendar_requests(self):
+        calendar=p.parse_year(self.year_collection(),TODAY)
+        with patch.object(p,'api_json',side_effect=AssertionError('Unexpected extra request')):
+            counts=p.fetch_days(CONFIG,{},'test',datetime(2026,11,17,12,tzinfo=timezone.utc),seed={d['date']:d['count'] for d in calendar['days']})
+        self.assertEqual(len(counts),7)
+        self.assertEqual(counts[TODAY.isoformat()],1)
 
 
 if __name__=='__main__':unittest.main()
