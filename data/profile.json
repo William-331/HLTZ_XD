@@ -6,25 +6,21 @@
     "adopted_on": "2026-11-17",
     "level": 1,
     "title": "新住客",
-    "total_xp": 8,
-    "xp_in_level": 8,
-    "xp_to_next": 52,
-    "action": "sleep",
-    "status": "窗边休息",
+    "total_xp": 13,
+    "xp_in_level": 13,
+    "xp_to_next": 47,
+    "action": "idle",
+    "status": "待在桌边",
     "unlocks": [
       "纸箱与小碗"
     ]
   },
   "today": {
-    "date": "2026-11-18",
-    "contributions": 0,
-    "earned_xp": 0
+    "date": "2026-11-19",
+    "contributions": 1,
+    "earned_xp": 5
   },
   "week": [
-    {
-      "date": "2026-11-12",
-      "count": 0
-    },
     {
       "date": "2026-11-13",
       "count": 0
@@ -48,6 +44,10 @@
     {
       "date": "2026-11-18",
       "count": 0
+    },
+    {
+      "date": "2026-11-19",
+      "count": 1
     }
   ],
   "projects": [
@@ -77,13 +77,13 @@
     }
   ],
   "source": "github",
-  "updated_on": "2026-11-18",
+  "updated_on": "2026-11-19",
   "calendar_basis": "GitHub 贡献日历日期（UTC）；GitHub 可能延迟计入贡献。",
   "calendar": {
-    "total": 56,
-    "active_days": 12,
+    "total": 57,
+    "active_days": 13,
     "start": "2025-11-16",
-    "end": "2026-11-18",
+    "end": "2026-11-19",
     "days": [
       {
         "date": "2025-11-16",
@@ -1556,10 +1556,21 @@
       {
         "date": "2026-11-18",
         "count": 0
+      },
+      {
+        "date": "2026-11-19",
+        "count": 1
       }
     ]
   },
   "activity": [
+    {
+      "date": "2026-11-19",
+      "kind": "commit",
+      "repo": "William-331/William-331",
+      "count": 1,
+      "title": "完成了 1 次提交"
+    },
     {
       "date": "2026-11-17",
       "kind": "commit",
@@ -1680,7 +1691,7 @@
       "url": "https://github.com/William-331/William-331",
       "description": "William & Kouzi — a little cat growing with GitHub contributions, right in the profile README.",
       "language": "Python",
-      "updated_on": "2026-11-17",
+      "updated_on": "2026-11-19",
       "stars": 0,
       "forks": 0,
       "archived": false,
@@ -1734,8 +1745,8 @@
   },
   "visibility_note": "公开数据视角；与你登录后看到的私有贡献及组织信息可能不同。",
   "scrapbook": {
-    "days_together": 2,
-    "active_days": 1,
+    "days_together": 3,
+    "active_days": 2,
     "languages": [
       "HTML",
       "Jupyter Notebook",
